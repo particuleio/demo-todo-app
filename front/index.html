@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Todo App Demo</title>
+  <style>
+    p span {
+      font-weight: bold;
+    }
+
+    #items button {
+      cursor: pointer;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Hello World !</h1>
+  <p>Web server connection status: <span id="status-server">waiting for connecton</span></p>
+  <p>DB server connection status: <span id="status-db">waiting for connecton</span></p>
+  <div id="items">
+    <div id="adder" style="display:block"><input><button onclick="createTodo()">+</button></div>
+  </div>
+
+</body>
+<script src="./script.js"></script>
+
+</html>
