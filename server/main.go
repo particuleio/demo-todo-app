@@ -132,6 +132,18 @@ func delete(c echo.Context) error {
 	return c.String(http.StatusOK, "deleted")
 }
 
+// serverAllowCORS middleware adds a `Server` header to the response.
+func serverAllowCORS(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderServer, "Echo/3.0")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowOrigin, "*")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowMethods, "GET, POST, PUT, DELETE")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowHeaders, "Content-Type")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowCredentials, "true")
+		return next(c)
+	}
+}
+
 func initServer() error {
 
 	e := echo.New()
@@ -147,6 +159,8 @@ func initServer() error {
 		AllowOriginFunc: func(string) (bool, error) { return true, nil },
 		AllowMethods:    []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodOptions},
 	}))
+
+	e.Use(serverAllowCORS)
 
 	err := e.Start(":" + port)
 	if err != nil {
