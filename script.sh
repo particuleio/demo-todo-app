@@ -4,10 +4,10 @@ docker pull docker.io/library/redis:7
 docker tag docker.io/library/redis:7 redis
 
 
-docker build -t servertest ./server
-docker build -t fronttest ./front
+docker build -t server ./server
+docker build -t front ./front
 
 
 docker run -d --rm --net=host --name=redis redis
-docker run -d --rm --net=host --name=server servertest
-docker run -d --rm --net=host --name=front fronttest
+docker run -d --rm --net=host --name=server server
+docker run -d --rm --net=host --name=front front
