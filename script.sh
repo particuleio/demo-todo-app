@@ -8,6 +8,6 @@ docker build -t servertest ./server
 docker build -t fronttest ./front
 
 
-docker run --rm --net=host --name=redis redis
-docker run --rm --net=host --name=server localhost/servertest
-docker run --rm --net=host --name=front localhost/fronttest
+docker run -d --rm --net=host --name=redis redis
+docker run -d --rm --net=host --name=server localhost/servertest
+docker run -d --rm --net=host --name=front localhost/fronttest
