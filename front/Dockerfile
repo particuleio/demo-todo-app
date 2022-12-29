@@ -1,6 +1,10 @@
 FROM docker.io/library/nginx:1.23.3
 
 COPY default.conf /etc/nginx/conf.d/default.conf
-COPY * /usr/share/nginx/html/
+COPY index.html script.js /usr/share/nginx/html/
+
+ARG SERVER_ADDR=localhost:1323
+
+RUN sed 's/\(SERVER_ADDR\).*$/\1 = "$SERVER_ADDR"/' -i script.js
 
 EXPOSE 8080
