@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todo_app.fullname" . }}-front
+  labels:
+    {{- include "todo_app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todo_app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todo_app.selectorLabels" . | nindent 8 }}
+        {{- .Values.front.labels | toYaml | nindent 8 }}
+    spec:
+      initContainers:
+        -
+          name: init
+          image: "{{ .Values.front.image }}"
+          command:
+            - sh
+            - -c
+          args:
+            - |-
+              cp /usr/share/nginx/html/* /tmp
+              sed 's#^\(const SERVER_ADDR\).*$#\1 = "'$SERVER_ADDR'"#' -i /tmp/script.js
+          volumeMounts:
+            -
+              name: html
+              mountPath: /tmp
+          env:
+            -
+              name: SERVER_ADDR
+              value: http://{{ .Values.host }}:8080{{.Values.server.pathPrefix}}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.front.image }}"
+          ports:
+            - containerPort: {{ .Values.front.port }}
+              protocol: TCP
+          command:
+            {{- .Values.front.command | toYaml | nindent 12 }}
+          args:
+            {{- .Values.front.args | toYaml | nindent 12 }}
+          volumeMounts:
+            -
+              name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        -
+          name: html
+          emptyDir: {}
+

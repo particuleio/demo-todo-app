@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "todo_app.fullname" . }}-redis
+  labels:
+    {{- include "todo_app.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "todo_app.fullname" . }}-redis
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todo_app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todo_app.selectorLabels" . | nindent 8 }}
+        {{- toYaml .Values.redis.labels | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.redis.image }}"
+          ports:
+            - containerPort: {{ .Values.redis.port }}
+              protocol: TCP
+          command:
+            {{- toYaml .Values.redis.command | nindent 12 }}
+          args:
+            {{- toYaml .Values.redis.args | nindent 12 }}

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todo_app.fullname" . }}-server
+  labels:
+    {{- include "todo_app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todo_app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todo_app.selectorLabels" . | nindent 8 }}
+        {{- .Values.server.labels | toYaml | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.server.image }}"
+          ports:
+            - containerPort: {{ .Values.server.port }}
+              protocol: TCP
+          command:
+            {{- .Values.server.command | toYaml | nindent 12 }}
+          args:
+            {{- .Values.server.args | toYaml | nindent 12 }}
+          env:
+            - name: DB_ADDR
+              value: {{ include "todo_app.fullname" . }}-redis:80
+            - name: PATH_PREFIX
+              value: {{ .Values.server.pathPrefix }}

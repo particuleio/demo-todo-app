@@ -1,0 +1,44 @@
+# Default values for todo_app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+redis:
+  image: docker.io/library/redis:7
+  port: 6379
+  labels:
+    component: redis
+
+server:
+  image: sametma/server:1
+  port: 1323
+  labels:
+    component: server
+  pathPrefix: /api
+
+front:
+  image: sametma/front:1
+  port: 8080
+  labels:
+    component: front
+
+service:
+  port: 80
+
+nameOverride: ""
+fullnameOverride: ""
+
+
+host: bla.test
+
+ingress:
+  enabled: false
+  annotations: {}
+  paths:
+    -
+      serviceSuffix: server
+      path: /api
+    -
+      serviceSuffix: front
+      path: /

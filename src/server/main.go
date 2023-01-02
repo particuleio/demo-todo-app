@@ -19,10 +19,11 @@ const (
 )
 
 var (
-	ctx    = context.Background()
-	client *redis.Client
-	dbAddr = "localhost:6379"
-	port   = "1323"
+	ctx        = context.Background()
+	client     *redis.Client
+	dbAddr     = "localhost:6379"
+	pathPrefix = "/api"
+	port       = "1323"
 )
 
 type (
@@ -137,13 +138,15 @@ func initServer() error {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	e.GET("/ping", ping)
-	e.GET("/pingdb", pingDB)
-	e.GET("/list", list)
-	e.POST("/create", create)
-	e.POST("/delete", delete)
+	g := e.Group(pathPrefix)
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	g.GET("/ping", ping)
+	g.GET("/pingdb", pingDB)
+	g.GET("/list", list)
+	g.POST("/create", create)
+	g.POST("/delete", delete)
+
+	g.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOriginFunc: func(string) (bool, error) { return true, nil },
 		AllowMethods:    []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodOptions},
 	}))
@@ -159,6 +162,10 @@ func main() {
 
 	if value, ok := os.LookupEnv("DB_ADDR"); ok {
 		dbAddr = value
+	}
+
+	if value, ok := os.LookupEnv("PATH_PREFIX"); ok {
+		pathPrefix = value
 	}
 
 	if value, ok := os.LookupEnv("PORT"); ok {
