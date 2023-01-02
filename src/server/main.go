@@ -24,6 +24,7 @@ var (
 	dbAddr     = "localhost:6379"
 	pathPrefix = "/api"
 	port       = "1323"
+	dbPass     = ""
 )
 
 type (
@@ -49,7 +50,7 @@ func initRedis() error {
 
 	client = redis.NewClient(&redis.Options{
 		Addr:     dbAddr,
-		Password: "",
+		Password: dbPass,
 		DB:       0,
 	})
 
@@ -172,10 +173,12 @@ func main() {
 		port = value
 	}
 
+	if value, ok := os.LookupEnv("DB_PASS"); ok {
+		dbPass = value
+	}
+
 	if err := initRedis(); err != nil {
 		log.Println(err)
-		// log.Fatalln(err)
-		// return
 	}
 
 	if err := initServer(); err != nil {
