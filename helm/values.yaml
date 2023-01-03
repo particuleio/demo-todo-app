@@ -9,6 +9,7 @@ redis:
   port: 6379
   labels:
     component: redis
+  pass: longpass
 
 server:
   image: sametma/server:1
@@ -28,6 +29,13 @@ service:
 
 nameOverride: ""
 fullnameOverride: ""
+
+
+persistentStorage:
+  enabled: true
+  storageClassName: standard
+  storage: 100Mi
+  accessModes: ["ReadWriteOnce"]
 
 
 host: bla.test

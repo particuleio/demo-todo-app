@@ -19,10 +19,43 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.redis.image }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.redis.port }}
               protocol: TCP
           command:
-            {{- toYaml .Values.redis.command | nindent 12 }}
-          args:
-            {{- toYaml .Values.redis.args | nindent 12 }}
+          command:
+            - sh
+            - '-c'
+            - >-
+              echo PASS=${DB_PASS}; redis-server --save 30 1 --requirepass
+              ${DB_PASS}
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "todo_app.fullname" . }}
+                  key: DB_PASS
+                  optional: false
+          {{- if .Values.persistentStorage.enabled }}
+          volumeMounts:
+            -
+              name: claim1
+              mountPath: /data
+          {{- end }}
+  {{- with .Values.persistentStorage }}
+  {{- if .enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: claim1
+    spec:
+      accessModes:
+        {{- toYaml .accessModes | nindent 8 }}
+      storageClassName: {{ .storageClassName }}
+      resources:
+        requests:
+          storage: {{ .storage }}
+  {{- end }}
+  {{- end }}

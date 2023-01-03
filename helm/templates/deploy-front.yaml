@@ -19,6 +19,7 @@ spec:
         -
           name: init
           image: "{{ .Values.front.image }}"
+          imagePullPolicy: Always
           command:
             - sh
             - -c

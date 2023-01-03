@@ -46,7 +46,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 func initRedis() error {
-	fmt.Println("Testing Golang Redis")
+	fmt.Printf("Testing Golang Redis ADDR=%s, PASS=%s\n", dbAddr, dbPass)
 
 	client = redis.NewClient(&redis.Options{
 		Addr:     dbAddr,

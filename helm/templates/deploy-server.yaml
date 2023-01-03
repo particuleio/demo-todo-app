@@ -18,6 +18,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.server.image }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.server.port }}
               protocol: TCP
@@ -26,7 +27,16 @@ spec:
           args:
             {{- .Values.server.args | toYaml | nindent 12 }}
           env:
-            - name: DB_ADDR
-              value: {{ include "todo_app.fullname" . }}-redis:80
-            - name: PATH_PREFIX
+            -
+              name: PATH_PREFIX
               value: {{ .Values.server.pathPrefix }}
+            -
+              name: DB_ADDR
+              value: {{ include "todo_app.fullname" . }}-redis:80
+            -
+              name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "todo_app.fullname" . }}
+                  key: DB_PASS
+                  optional: false

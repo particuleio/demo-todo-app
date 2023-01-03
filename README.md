@@ -10,6 +10,8 @@ The app is inteded to be very simple
 # Build and run the app
 
 ``` bash
+cd ./src
+
 # get redis image
 docker pull docker.io/library/redis:7
 docker tag docker.io/library/redis:7 redis
