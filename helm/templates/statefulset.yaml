@@ -24,7 +24,6 @@ spec:
             - containerPort: {{ .Values.redis.port }}
               protocol: TCP
           command:
-          command:
             - sh
             - '-c'
             - >-
