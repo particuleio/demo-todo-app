@@ -8,4 +8,4 @@ ARG SERVER_ADDR=localhost:1323
 
 RUN sed 's#^\(const SERVER_ADDR\).*$#\1 = "'$SERVER_ADDR'"#' -i /usr/share/nginx/html/script.js
 
-EXPOSE 8080
+EXPOSE 8888

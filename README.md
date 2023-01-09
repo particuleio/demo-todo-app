@@ -3,13 +3,13 @@
 
 
 # How it works ?
-![diagram](diagram/diagram.svg)
+![diagram](/src/diagram/diagram.svg)
 
 The app is inteded to be very simple
 
 # Build and run the app
 
-``` bash
+```bash
 cd ./src
 
 # get redis image

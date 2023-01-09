@@ -147,10 +147,7 @@ func initServer() error {
 	g.POST("/create", create)
 	g.POST("/delete", delete)
 
-	g.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOriginFunc: func(string) (bool, error) { return true, nil },
-		AllowMethods:    []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodOptions},
-	}))
+	g.Use(middleware.CORS())
 
 	err := e.Start(":" + port)
 	if err != nil {
