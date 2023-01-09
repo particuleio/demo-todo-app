@@ -10,7 +10,6 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/go-redis/redis/v9"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
@@ -134,10 +133,22 @@ func delete(c echo.Context) error {
 	return c.String(http.StatusOK, "deleted")
 }
 
+func addHeader(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set("X-test", "test")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowOrigin, "*")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowMethods, "GET, POST, PUT, DELETE, OPTIONS")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowHeaders, "Content-Type")
+		c.Response().Header().Set(echo.HeaderAccessControlAllowCredentials, "true")
+		return next(c)
+	}
+}
+
 func initServer() error {
 
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Use(addHeader)
 
 	g := e.Group(pathPrefix)
 
@@ -146,8 +157,6 @@ func initServer() error {
 	g.GET("/list", list)
 	g.POST("/create", create)
 	g.POST("/delete", delete)
-
-	g.Use(middleware.CORS())
 
 	err := e.Start(":" + port)
 	if err != nil {
